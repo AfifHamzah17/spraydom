@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "Musik Lokal",
+    "src": "./8-bit-loop.mp3",
+    "category": "Musik Lokal",
+    "artist": "Traditional Artists",
+    "album": "Sumatera Utara Collection",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "0:32"
+  },
+  {
+    "id": 2,
+    "title": "Hujan",
+    "src": "/audio/hujan.mp3",
+    "category": "Nature",
+    "artist": "Nature Sounds",
+    "album": "Rain Collection",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "5:20"
+  },
+  {
+    "id": 3,
+    "title": "Suara Alam",
+    "src": "/audio/alam.mp3",
+    "category": "Nature",
+    "artist": "Nature Sounds",
+    "album": "Forest Collection",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "4:30"
+  },
+  {
+    "id": 4,
+    "title": "Legenda Sumut",
+    "src": "/audio/legenda1.mp3",
+    "category": "Stories",
+    "artist": "Storyteller",
+    "album": "Indonesian Legends",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "7:15"
+  },
+  {
+    "id": 5,
+    "title": "Hitung Domba",
+    "src": "/audio/domba.mp3",
+    "category": "Sleep",
+    "artist": "Sleep Therapy",
+    "album": "Sleep Aid",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "10:00"
+  },
+  {
+    "id": 6,
+    "title": "Ombak Pantai",
+    "src": "/audio/waves.mp3",
+    "category": "Nature",
+    "artist": "Ocean Sounds",
+    "album": "Beach Collection",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "6:45"
+  },
+  {
+    "id": 7,
+    "title": "Meditation Guide",
+    "src": "/audio/meditation.mp3",
+    "category": "Wellness",
+    "artist": "Meditation Expert",
+    "album": "Mindfulness",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "12:30"
+  },
+  {
+    "id": 8,
+    "title": "Dungeon Ambience",
+    "src": "/audio/dungeon.mp3",
+    "category": "Ambience",
+    "artist": "Sound Designer",
+    "album": "Fantasy Worlds",
+    "image": "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    "duration": "8:20"
+  }
+]
