@@ -6,12 +6,11 @@ import audiosData from '../data/audios.json'; // Import JSON directly
 // Mapping kategori ke gambar
 const categoryImages = {
   'All': '/images/all-categories.jpg',
-  'Musik Lokal': '/images/musik-lokal.jpg',
+  'Local Music': '/images/musik-lokal.jpg',
   'Nature': '/image/ps.png',
-  'Stories': '/images/stories.jpg',
-  'Sleep': '/images/sleep.jpg',
-  'Wellness': '/images/wellness.jpg',
-  'Ambience': '/images/ambience.jpg'
+  'Folklore': '/images/stories.jpg',
+  'ASMR': '/images/sleep.jpg',
+  'Sleep Early': '/images/wellness.jpg'
 };
 
 export default function Audio() {

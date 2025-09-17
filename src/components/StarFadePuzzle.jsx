@@ -7,7 +7,7 @@ export default function StarFadePuzzle() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [multiplier, setMultiplier] = useState(1)
-  const [timeLeft, setTimeLeft] = useState(30)
+  const [timeLeft, setTimeLeft] = useState(60)
   const [freezeTime, setFreezeTime] = useState(false)
   const [doubleScore, setDoubleScore] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
@@ -33,7 +33,7 @@ export default function StarFadePuzzle() {
   
   // Initialize audio on component mount
   useEffect(() => {
-    audioRef.current = new Audio('./8-bit-loop.mp3')
+    audioRef.current = new Audio('./12.mp3')
     audioRef.current.loop = true
     
     // Cleanup audio when component unmounts
@@ -50,7 +50,7 @@ export default function StarFadePuzzle() {
     console.log('Game Started'); // For debugging to check if the button works
     setGameStarted(true) // Start game
     setGameOver(false)
-    setTimeLeft(30) // Reset timer
+    setTimeLeft(60) // Reset timer
     setScore(0) // Reset score
     setLevel(1) // Reset level
     setMultiplier(1) // Reset multiplier
@@ -73,8 +73,8 @@ export default function StarFadePuzzle() {
       if (starsRef.current.length > 100 || timeLeftRef.current <= 0) return // Limit stars and stop if time's up
       const id = idRef.current++
       const starType = Math.random() < 0.85 ? 'basic' : 'gradient' // 15% chance of gradient star (rare)
-      const x = getRandom(0, 100)
-      const y = getRandom(0, 100)
+      const x = getRandom(10, 90) // Spawn within bounds to avoid immediate bounce
+      const y = getRandom(10, 90)
       
       setStars((s) => [
         ...s,
@@ -85,8 +85,10 @@ export default function StarFadePuzzle() {
           type: starType,
           shiny: false, // Shiny effect removed for now
           // For gradient stars, add movement properties
-          moveX: starType === 'gradient' ? getRandom(-1, 1) : 0,
-          moveY: starType === 'gradient' ? getRandom(-1, 1) : 0,
+          moveX: starType === 'gradient' ? getRandom(-0.8, 0.8) : 0, // Random movement speed
+          moveY: starType === 'gradient' ? getRandom(-0.8, 0.8) : 0,
+          createdAt: starType === 'gradient' ? Date.now() : null, // Track creation time
+          bounceEffect: false, // For bounce animation
         },
       ])
     }
@@ -100,35 +102,70 @@ export default function StarFadePuzzle() {
     }
   }, [gameStarted, gameOver, level]) // Removed stars and timeLeft from dependencies
   
-  // Update star positions for gradient stars
+  // Update star positions for gradient stars and remove old ones
   useEffect(() => {
     if (!gameStarted || gameOver) return;
     
     const moveStars = () => {
-      setStars(prevStars => 
-        prevStars.map(star => {
+      const now = Date.now();
+      setStars(prevStars => {
+        // First, remove gradient stars older than 5 seconds
+        let filteredStars = prevStars.filter(star => {
+          if (star.type === 'gradient' && star.createdAt) {
+            return now - star.createdAt < 5000; // Keep if less than 5 seconds old
+          }
+          return true; // Keep basic stars
+        });
+        
+        // Then update positions for gradient stars
+        return filteredStars.map(star => {
           if (star.type === 'gradient') {
-            // Update position with boundary checking
+            // Calculate new position
             let newX = star.x + star.moveX;
             let newY = star.y + star.moveY;
+            let newMoveX = star.moveX;
+            let newMoveY = star.moveY;
+            let bounceEffect = false;
             
-            // Bounce off edges
-            if (newX <= 0 || newX >= 100) {
-              newX = star.x - star.moveX; // Reverse direction
+            // Check boundaries and bounce if needed
+            // Left boundary
+            if (newX <= 0) {
+              newX = 0; // Clamp to boundary
+              newMoveX = Math.abs(star.moveX); // Reverse direction (positive)
+              bounceEffect = true;
             }
-            if (newY <= 0 || newY >= 100) {
-              newY = star.y - star.moveY; // Reverse direction
+            // Right boundary
+            else if (newX >= 100) {
+              newX = 100; // Clamp to boundary
+              newMoveX = -Math.abs(star.moveX); // Reverse direction (negative)
+              bounceEffect = true;
+            }
+            
+            // Top boundary
+            if (newY <= 0) {
+              newY = 0; // Clamp to boundary
+              newMoveY = Math.abs(star.moveY); // Reverse direction (positive)
+              bounceEffect = true;
+            }
+            // Bottom boundary
+            else if (newY >= 100) {
+              newY = 100; // Clamp to boundary
+              newMoveY = -Math.abs(star.moveY); // Reverse direction (negative)
+              bounceEffect = true;
             }
             
             return {
               ...star,
               x: newX,
-              y: newY
+              y: newY,
+              moveX: newMoveX,
+              moveY: newMoveY,
+              bounceEffect: bounceEffect
             };
           }
           return star;
-        })
-      );
+        });
+      });
     };
     
     const moveInterval = setInterval(moveStars, 50); // Update positions every 50ms
@@ -255,8 +292,17 @@ export default function StarFadePuzzle() {
         <motion.div
           key={st.id}
           initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={{ 
+            opacity: 1, 
+            scale: st.bounceEffect ? [1, 1.3, 1] : 1,
+            rotate: st.type === 'gradient' ? [0, 10, -10, 0] : 0
+          }}
           exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ 
+            duration: st.bounceEffect ? 0.3 : 2,
+            repeat: st.type === 'gradient' ? Infinity : 0,
+            ease: "easeInOut"
+          }}
           style={{
             position: 'absolute',
             left: `${st.x}%`,
@@ -271,7 +317,6 @@ export default function StarFadePuzzle() {
             <motion.div
               animate={{ 
                 scale: [1, 1.2, 1],
-                rotate: [0, 10, -10, 0]
               }}
               transition={{ 
                 duration: 2,
@@ -363,4 +408,4 @@ export default function StarFadePuzzle() {
       {score >= level * 10 && handleLevelUp()}
     </div>
   )
-}
+} 

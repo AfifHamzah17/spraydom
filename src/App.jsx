@@ -11,6 +11,9 @@ import DailyRoutine from './pages/DailyRoutine'
 import MiniGames from './pages/MiniGames'
 import Video from './pages/Video'
 import Product from './pages/Product'
+import InsomniaCheck from './pages/InsomniaCheck';
+import Sleeptube from './pages/Sleeptube'; 
+import Dreamlog from './pages/Dreamlog'; 
 
 export default function App() {
   return (
@@ -24,6 +27,9 @@ export default function App() {
           <Route path="/mini-games" element={<MiniGames />} />
           <Route path="/video" element={<Video />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/insomnia-check" element={<InsomniaCheck />} /> 
+          <Route path="/sleeptube" element={<Sleeptube />} />
+          <Route path="/dreamlog" element={<Dreamlog />} />
         </Routes>
       </main>
       <BottomNav />

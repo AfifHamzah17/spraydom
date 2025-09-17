@@ -15,8 +15,8 @@ return (
 </div>
 </div>
 <div className="flex items-center gap-3">
-<button className="btn btn-ghost btn-sm">Login</button>
-<button className="btn btn-outline btn-sm flex items-center gap-2"><FiSun /> Theme</button>
+{/* <button className="btn btn-ghost btn-sm">Login</button>
+<button className="btn btn-outline btn-sm flex items-center gap-2"><FiSun /> Theme</button> */}
 </div>
 </div>
 </header>

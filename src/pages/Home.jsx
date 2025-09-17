@@ -11,12 +11,12 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [greeting, setGreeting] = useState('');
-  const [userName] = useState('User'); // Bisa diganti dengan data user sebenarnya
+  const [userName] = useState('User'); // Can be replaced with actual user data
   
   useEffect(() => {
     // Load products from JSON
     if (products && products.length > 0) {
-      // Set first 5 products as featured (untuk swiper)
+      // Set first 5 products as featured (for swiper)
       setFeaturedProducts(products.slice(0, 5));
       setAllProducts(products);
     }
@@ -24,11 +24,11 @@ export default function Home() {
     // Set greeting based on time of day
     const hour = new Date().getHours();
     if (hour < 12) {
-      setGreeting('Selamat Pagi');
+      setGreeting('Good Morning');
     } else if (hour < 18) {
-      setGreeting('Selamat Siang');
+      setGreeting('Good Afternoon');
     } else {
-      setGreeting('Selamat Malam');
+      setGreeting('Good Evening');
     }
   }, []);
 
@@ -40,16 +40,16 @@ export default function Home() {
           {greeting}, {userName}!
         </h1>
         <p className="text-xl text-gray-300">
-          Temukan keharuman alami dari berbagai penjuru dunia dalam setiap semprotan
+          Discover natural fragrances from around the world in every spray
         </p>
       </div>
 
       {/* Featured Products Swiper */}
       <div className="mb-16">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">Produk Unggulan</h2>
+          <h2 className="text-3xl font-bold">Featured Products</h2>
           <button className="text-green-500 hover:text-green-400 font-medium flex items-center">
-            Lihat Semua
+            View All
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
@@ -104,7 +104,7 @@ export default function Home() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center">
                         <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                        <span className="text-sm text-gray-400">Tersedia</span>
+                        <span className="text-sm text-gray-400">Available</span>
                       </div>
                       
                       <a
@@ -116,7 +116,7 @@ export default function Home() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                           <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.545a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.545.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                         </svg>
-                        Pesan
+                        Order
                       </a>
                     </div>
                   </div>
@@ -129,11 +129,11 @@ export default function Home() {
 
       {/* About Section */}
       <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 mb-16 border border-gray-700">
-        <h2 className="text-3xl font-bold mb-6">Apa itu Spraydom?</h2>
+        <h2 className="text-3xl font-bold mb-6">What is Spraydom?</h2>
         <p className="text-gray-300 text-lg leading-relaxed">
-          Spraydom adalah koleksi premium aromaterapi semprot yang menghadirkan pengalaman sensorial 
-          dari berbagai budaya dunia. Setiap produk dirancang dengan hati-hati menggunakan bahan-bahan 
-          alami pilihan untuk menciptakan suasana yang menenangkan dan menyegarkan ruangan Anda.
+          Spraydom is a premium collection of spray aromatherapy that brings sensory experiences 
+          from various world cultures. Each product is carefully crafted with selected natural ingredients 
+          to create a calming and refreshing atmosphere in your space.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
@@ -143,8 +143,8 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Bahan Alami</h3>
-            <p className="text-gray-400">100% bahan alami tanpa bahan kimia berbahaya</p>
+            <h3 className="text-xl font-bold mb-2">Natural Ingredients</h3>
+            <p className="text-gray-400">100% natural ingredients without harmful chemicals</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl">
@@ -153,8 +153,8 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Kualitas Premium</h3>
-            <p className="text-gray-400">Diproduksi dengan standar kualitas internasional</p>
+            <h3 className="text-xl font-bold mb-2">Premium Quality</h3>
+            <p className="text-gray-400">Produced with international quality standards</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl">
@@ -163,15 +163,15 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Aroma Global</h3>
-            <p className="text-gray-400">Koleksi aroma dari berbagai penjuru dunia</p>
+            <h3 className="text-xl font-bold mb-2">Global Scents</h3>
+            <p className="text-gray-400">Fragrance collection from various corners of the world</p>
           </div>
         </div>
       </div>
 
       {/* All Products Section */}
       <div className="mb-16">
-        <h2 className="text-3xl font-bold mb-8">Semua Produk</h2>
+        <h2 className="text-3xl font-bold mb-8">All Products</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {allProducts.map((p) => {
@@ -200,7 +200,7 @@ export default function Home() {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                      <span className="text-xs text-gray-400">Tersedia</span>
+                      <span className="text-xs text-gray-400">Available</span>
                     </div>
                     
                     <a
@@ -212,7 +212,7 @@ export default function Home() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.545a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.545.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
-                      Pesan
+                      Order
                     </a>
                   </div>
                 </div>
@@ -222,20 +222,21 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Call to Action */}
+     {/* Call to Action */}
       <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl p-8 md:p-12 text-center mb-16">
-        <h2 className="text-3xl font-bold mb-4">Temukan Keharuman Anda</h2>
+        <h2 className="text-3xl font-bold mb-4">Check My Insomnia Level</h2>
         <p className="text-lg mb-8 max-w-2xl mx-auto">
-          Jelajahi koleksi lengkap kami dan temukan aroma sempurna untuk setiap suasana
-        </p>
-        <button className="bg-white text-green-700 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-colors">
-          Lihat Koleksi Lengkap
-        </button>
+Find out your level of insomnia with this simple test and get recommendations for better sleep.        </p>
+        <a
+          href="/insomnia-check"
+          className="bg-white text-green-700 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-colors inline-block"
+        >
+          Find Out Now!
+        </a>
       </div>
-
       {/* Testimonials */}
       <div className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center">Apa Kata Mereka</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
@@ -244,7 +245,7 @@ export default function Home() {
                 <span className="font-bold">A</span>
               </div>
               <div>
-                <h4 className="font-bold">Andi</h4>
+                <h4 className="font-bold">Alex</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -254,7 +255,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"Aroma Spray Nusantara sangat menenangkan. Saya menggunakan setiap hari di ruang kerja saya."</p>
+            <p className="text-gray-300">"The Nusantara Spray scent is so calming. I use it every day in my workspace."</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
@@ -263,7 +264,7 @@ export default function Home() {
                 <span className="font-bold">B</span>
               </div>
               <div>
-                <h4 className="font-bold">Budi</h4>
+                <h4 className="font-bold">Brian</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -273,7 +274,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"Spray Arabic memberikan sentuhan mewah di rumah saya. Wanginya tahan lama dan sangat menyegarkan."</p>
+            <p className="text-gray-300">"The Arabic Spray adds a touch of luxury to my home. The fragrance is long-lasting and very refreshing."</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
@@ -282,7 +283,7 @@ export default function Home() {
                 <span className="font-bold">C</span>
               </div>
               <div>
-                <h4 className="font-bold">Citra</h4>
+                <h4 className="font-bold">Claire</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(4)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -295,7 +296,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"Pelayanan sangat baik dan produknya berkualitas. Sudah menjadi pelanggan setia Spraydom."</p>
+            <p className="text-gray-300">"Excellent service and quality products. I've become a loyal Spraydom customer."</p>
           </div>
         </div>
       </div>
