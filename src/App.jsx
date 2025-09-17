@@ -27,7 +27,7 @@ export default function App() {
           <Route path="/mini-games" element={<MiniGames />} />
           <Route path="/video" element={<Video />} />
           <Route path="/product" element={<Product />} />
-          <Route path="/insomnia-check" element={<InsomniaCheck />} /> 
+          <Route path="/insomniacheck" element={<InsomniaCheck />} /> 
           <Route path="/sleeptube" element={<Sleeptube />} />
           <Route path="/dreamlog" element={<Dreamlog />} />
         </Routes>
