@@ -1,154 +1,203 @@
-// src/pages/Sleeptube.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-// Sample video data - ini nantinya akan diambil dari backend
-const sampleVideos = [
-  {
-    id: 1,
-    title: "Relaxing Yawning Compilation",
-    description: "A soothing collection of yawning videos to help induce sleepiness",
-    thumbnail: "https://via.placeholder.com/300x200?text=Yawning+Video",
-    duration: "10:45",
-    views: "12.5K"
-  },
-  {
-    id: 2,
-    title: "Gentle Breathing Exercises",
-    description: "Follow these breathing techniques to calm your mind before sleep",
-    thumbnail: "https://via.placeholder.com/300x200?text=Breathing+Exercise",
-    duration: "8:20",
-    views: "8.7K"
-  },
-  {
-    id: 3,
-    title: "Rain Sounds for Deep Sleep",
-    description: "Natural rain sounds to help you fall asleep faster",
-    thumbnail: "https://via.placeholder.com/300x200?text=Rain+Sounds",
-    duration: "30:00",
-    views: "24.3K"
-  },
-  {
-    id: 4,
-    title: "ASMR Sleep Therapy",
-    description: "Gentle sounds and whispers to promote deep relaxation",
-    thumbnail: "https://via.placeholder.com/300x200?text=ASMR+Therapy",
-    duration: "15:30",
-    views: "18.9K"
-  }
-];
+import { useAuth } from '../context/AuthContext';
+import apiService from '../services/api';
+import { FaPlus, FaArrowLeft, FaPlay, FaClock, FaFilter } from 'react-icons/fa';
 
 export default function Sleeptube() {
   const [videos, setVideos] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const navigate = useNavigate();
+  const { user, token } = useAuth();
 
   useEffect(() => {
-    // Simulate API call to fetch videos
-    setVideos(sampleVideos);
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getVideos();
+        
+        // Urutkan video berdasarkan createdAt (terbaru dulu)
+        const sortedVideos = (response.result.videos || []).sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateB - dateA;
+        });
+        
+        setVideos(sortedVideos);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
   }, []);
 
   const handleVideoClick = (video) => {
-    setSelectedVideo(video);
+    navigate(`/sleeptube/${video.id}`);
   };
 
-  const handleClosePlayer = () => {
-    setSelectedVideo(null);
+  const handleAddVideo = () => {
+    navigate('/admin/video-create');
   };
+
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const formatRelativeTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return 'Baru saja';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} menit yang lalu`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} jam yang lalu`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} hari yang lalu`;
+    } else {
+      return date.toLocaleDateString('id-ID');
+    }
+  };
+
+  // Filter videos by category
+  const filteredVideos = selectedCategory === 'all' 
+    ? videos 
+    : videos.filter(video => video.category === selectedCategory);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-xl">Loading videos...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center text-green-500 hover:text-green-400 mb-4"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-          </svg>
-          Back to Home
-        </button>
-        
-        <h1 className="text-4xl font-bold mb-2">Sleeptube</h1>
-        <p className="text-xl text-gray-300">
-          Soothing videos to help you relax and fall asleep faster
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/')}
+              className="flex items-center text-green-500 hover:text-green-400 mr-4"
+            >
+              <FaArrowLeft className="mr-1" /> Back to Home
+            </button>
+            <h1 className="text-4xl font-bold">Sleeptube</h1>
+          </div>
+          
+          {token && user?.role === 'admin' && (
+            <button
+              onClick={handleAddVideo}
+              className="flex items-center bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <FaPlus className="mr-2" />
+              Add Video
+            </button>
+          )}
+        </div>
+        <p className="text-xl text-gray-300 mt-2">
+          Video pendek untuk meningkatkan rasa kantuk dan kualitas tidur Anda
         </p>
       </div>
 
-      {selectedVideo ? (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">{selectedVideo.title}</h2>
-            <button 
-              onClick={handleClosePlayer}
-              className="text-gray-400 hover:text-white"
+      {/* Category Filter */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-4">
+          <FaFilter className="text-gray-400" />
+          <span className="text-gray-300">Kategori:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { id: 'all', name: 'Semua' },
+            { id: 'sleep-music', name: 'Musik Tidur' },
+            { id: 'meditation', name: 'Meditasi' },
+            { id: 'nature-sounds', name: 'Suara Alam' },
+            { id: 'white-noise', name: 'White Noise' },
+            { id: 'guided-meditation', name: 'Meditasi Terpandu' },
+            { id: 'breathing', name: 'Pernapasan' },
+            { id: 'asmr', name: 'ASMR' }
+          ].map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category.id
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              {category.name}
             </button>
-          </div>
-          
-          <div className="aspect-w-16 aspect-h-9 bg-black rounded-xl mb-6 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <p className="text-white">Video Player</p>
-              <p className="text-gray-400 text-sm mt-2">{selectedVideo.title}</p>
-            </div>
-          </div>
-          
-          <div className="flex justify-between text-gray-400 mb-4">
-            <span>{selectedVideo.views} views</span>
-            <span>{selectedVideo.duration}</span>
-          </div>
-          
-          <p className="text-gray-300">{selectedVideo.description}</p>
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video) => (
-            <motion.div 
-              key={video.id}
-              whileHover={{ y: -5 }}
-              className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 cursor-pointer"
-              onClick={() => handleVideoClick(video)}
-            >
-              <div className="relative">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-lg font-bold">{video.title}</h3>
-                </div>
-                <div className="absolute top-4 right-4 bg-black/70 px-2 py-1 rounded text-sm">
-                  {video.duration}
-                </div>
-              </div>
-              
-              <div className="p-4">
-                <p className="text-gray-300 text-sm mb-3 line-clamp-2">{video.description}</p>
-                
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>{video.views} views</span>
-                  <button className="text-green-500 hover:text-green-400">
-                    Watch
-                  </button>
-                </div>
-              </div>
-            </motion.div>
           ))}
+        </div>
+      </div>
+
+      {/* Video Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredVideos.map((video) => (
+          <motion.div
+            key={video.id}
+            whileHover={{ y: -5 }}
+            className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 cursor-pointer"
+            onClick={() => handleVideoClick(video)}
+          >
+            {/* Thumbnail */}
+            <div className="relative">
+              <img
+                src={video.thumbnail}
+                alt={video.title}
+                className="w-full h-40 object-cover"
+              />
+              <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
+                {formatDuration(video.duration)}
+              </div>
+            </div>
+            
+            {/* Video Info */}
+            <div className="p-4">
+              <h3 className="font-bold text-white mb-2 line-clamp-2">{video.title}</h3>
+              <p className="text-gray-400 text-sm mb-3 line-clamp-2">{video.description}</p>
+              
+              <div className="flex justify-between items-center text-xs text-gray-400">
+                <span className="flex items-center">
+                  <FaClock className="mr-1" />
+                  {formatRelativeTime(video.createdAt)}
+                </span>
+                <div className="flex items-center text-green-400">
+                  <FaPlay className="mr-1" />
+                  Play
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      
+      {filteredVideos.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">Tidak ada video dalam kategori ini</p>
+          {token && user?.role === 'admin' && (
+            <button
+              onClick={handleAddVideo}
+              className="mt-4 flex items-center bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium transition-colors mx-auto"
+            >
+              <FaPlus className="mr-2" />
+              Tambah Video Pertama
+            </button>
+          )}
         </div>
       )}
     </div>

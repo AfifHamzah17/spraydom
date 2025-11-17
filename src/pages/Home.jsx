@@ -1,25 +1,49 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import products from '../data/products.json';
+import { useAuth } from '../context/AuthContext';
+import apiService from '../services/api';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [greeting, setGreeting] = useState('');
-  const [userName] = useState('User'); // Can be replaced with actual user data
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   
   useEffect(() => {
-    // Load products from JSON
-    if (products && products.length > 0) {
-      // Set first 5 products as featured (for swiper)
-      setFeaturedProducts(products.slice(0, 5));
-      setAllProducts(products);
-    }
+    // Fetch products from API
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getProducts();
+        
+        if (response && response.result && response.result.products) {
+          const products = response.result.products;
+          // Set first 5 products as featured (for swiper)
+          setFeaturedProducts(products.slice(0, 5));
+          setAllProducts(products);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        // Fallback to JSON if API fails
+        import('../data/products.json').then(productsData => {
+          if (productsData.default && productsData.default.length > 0) {
+            setFeaturedProducts(productsData.default.slice(0, 5));
+            setAllProducts(productsData.default);
+          }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
     
     // Set greeting based on time of day
     const hour = new Date().getHours();
@@ -32,12 +56,20 @@ export default function Home() {
     }
   }, []);
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8 flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Greeting Section */}
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-2">
-          {greeting}, {userName}!
+          {greeting}, {user?.name || 'User'}!
         </h1>
         <p className="text-xl text-gray-300">
           Discover natural fragrances from around the world in every spray
@@ -48,12 +80,15 @@ export default function Home() {
       <div className="mb-16">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Featured Products</h2>
-          <button className="text-green-500 hover:text-green-400 font-medium flex items-center">
+          <Link 
+            to="/products" 
+            className="text-green-500 hover:text-green-400 font-medium flex items-center"
+          >
             View All
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
-          </button>
+          </Link>
         </div>
 
         <Swiper
@@ -84,7 +119,7 @@ export default function Home() {
             const waUrl = `https://wa.me/${p.wa_number}?text=${encodeURIComponent(p.wa_message)}`;
             
             return (
-              <SwiperSlide key={p.name}>
+              <SwiperSlide key={p.id || p.name}>
                 <div className="bg-gray-800/50 rounded-xl overflow-hidden transition-all duration-300 hover:bg-gray-800/70 hover:shadow-xl hover:scale-[1.02] border border-gray-700 h-full">
                   <div className="relative">
                     <img 
@@ -131,9 +166,9 @@ export default function Home() {
       <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 mb-16 border border-gray-700">
         <h2 className="text-3xl font-bold mb-6">What is Spraydom?</h2>
         <p className="text-gray-300 text-lg leading-relaxed">
-          Spraydom is a premium collection of spray aromatherapy that brings sensory experiences 
-          from various world cultures. Each product is carefully crafted with selected natural ingredients 
-          to create a calming and refreshing atmosphere in your space.
+        Spraydom is an integrated innovation that combines aromatherapy spray crafted 
+        from the natural essence of North Sumatra 
+        with a web-based sleep management platform designed to help reduce insomnia. 
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
@@ -144,7 +179,7 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">Natural Ingredients</h3>
-            <p className="text-gray-400">100% natural ingredients without harmful chemicals</p>
+            <p className="text-gray-400">Crafted from 100% natural, eco-friendly resources without harmful chemicals, ensuring safety and purity.</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl">
@@ -154,7 +189,7 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">Premium Quality</h3>
-            <p className="text-gray-400">Produced with international quality standards</p>
+            <p className="text-gray-400">Produced under high-quality standards, prioritizing safety, comfort, and effectiveness in supporting healthy sleep.</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl">
@@ -163,8 +198,8 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Global Scents</h3>
-            <p className="text-gray-400">Fragrance collection from various corners of the world</p>
+            <h3 className="text-xl font-bold mb-2">Local Identity, Global Solution</h3>
+            <p className="text-gray-400">Not only embraces the aromatic heritage of North Sumatra but also brings it to the global stage.</p>
           </div>
         </div>
       </div>
@@ -179,7 +214,7 @@ export default function Home() {
             
             return (
               <div 
-                key={p.name} 
+                key={p.id || p.name} 
                 className="bg-gray-800/50 rounded-xl overflow-hidden transition-all duration-300 hover:bg-gray-800/70 hover:shadow-xl border border-gray-700"
               >
                 <div className="relative">
@@ -222,18 +257,20 @@ export default function Home() {
         </div>
       </div>
 
-     {/* Call to Action */}
+      {/* Call to Action */}
       <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl p-8 md:p-12 text-center mb-16">
         <h2 className="text-3xl font-bold mb-4">Check My Insomnia Level</h2>
         <p className="text-lg mb-8 max-w-2xl mx-auto">
-Find out your level of insomnia with this simple test and get recommendations for better sleep.        </p>
-        <a
-          href="/insomnia-check"
+          Find out your level of insomnia with this simple test and get recommendations for better sleep.
+        </p>
+        <Link
+          to="/insomnia-check"
           className="bg-white text-green-700 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-colors inline-block"
         >
           Find Out Now!
-        </a>
+        </Link>
       </div>
+      
       {/* Testimonials */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>

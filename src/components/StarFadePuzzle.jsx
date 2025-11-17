@@ -1,7 +1,10 @@
+// src/components/StarFadePuzzle.jsx
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+
 // Helper function for random number generation
 const getRandom = (min, max) => Math.random() * (max - min) + min
+
 export default function StarFadePuzzle() {
   const [stars, setStars] = useState([])
   const [score, setScore] = useState(0)
@@ -16,7 +19,6 @@ export default function StarFadePuzzle() {
   const [gameOver, setGameOver] = useState(false)
   const idRef = useRef(0)
   const intervalRef = useRef(null)
-  const timerRef = useRef(null)
   const audioRef = useRef(null)
   const lastTimeRef = useRef(Date.now())
   const starsRef = useRef(stars) // Ref to track current stars
@@ -24,11 +26,11 @@ export default function StarFadePuzzle() {
   
   // Update refs when state changes
   useEffect(() => {
-    starsRef.current = stars;
+    starsRef.current = stars
   }, [stars]);
   
   useEffect(() => {
-    timeLeftRef.current = timeLeft;
+    timeLeftRef.current = timeLeft
   }, [timeLeft]);
   
   // Initialize audio on component mount
@@ -45,9 +47,9 @@ export default function StarFadePuzzle() {
     }
   }, [])
   
-  // Start the game
+  // Start game
   function startGame() {
-    console.log('Game Started'); // For debugging to check if the button works
+    console.log('Game Started'); // For debugging to check if button works
     setGameStarted(true) // Start game
     setGameOver(false)
     setTimeLeft(60) // Reset timer
@@ -255,6 +257,23 @@ export default function StarFadePuzzle() {
     }
   }
   
+  // Random power-up effects
+  useEffect(() => {
+    if (!gameStarted || gameOver) return;
+    
+    // Randomly apply power-ups during gameplay
+    const powerUpInterval = setInterval(() => {
+      const random = Math.random();
+      if (random < 0.1) { // 10% chance for double score
+        applyPowerUp('doubleScore');
+      } else if (random < 0.15) { // 5% chance for time freeze
+        applyPowerUp('timeFreeze');
+      }
+    }, 10000); // Check every 10 seconds
+    
+    return () => clearInterval(powerUpInterval);
+  }, [gameStarted, gameOver]);
+  
   // Render Game
   return (
     <div className="relative w-full h-[60vh] bg-gradient-to-b from-slate-900 to-black rounded-xl overflow-hidden">
@@ -363,26 +382,6 @@ export default function StarFadePuzzle() {
         </motion.div>
       ))}
       
-      {/* Power-ups */}
-      <div className="absolute top-4 left-4 text-white text-lg font-bold z-10">
-        <div>Score: {Math.floor(score)}</div>
-        <div>Level: {level}</div>
-        <div>Time Left: {Math.ceil(timeLeft)}s</div>
-        {freezeTime && <div className="text-blue-300">TIME FROZEN!</div>}
-        {doubleScore && <div className="text-yellow-300">DOUBLE SCORE!</div>}
-      </div>
-      
-      {/* Double Score Text */}
-      {showDoubleScoreText && (
-        <motion.div
-          className="absolute top-1/3 left-1/2 transform -translate-x-1/2 text-white text-4xl font-bold z-30"
-          animate={{ opacity: [1, 0], scale: [1, 1.5] }}
-          transition={{ duration: 1 }}
-        >
-          DOUBLE SCORE!
-        </motion.div>
-      )}
-      
       {/* Audio Toggle Button with Icons */}
       <div className="absolute top-4 right-4 z-20">
         <button
@@ -404,8 +403,30 @@ export default function StarFadePuzzle() {
         </button>
       </div>
       
+      {/* Double Score Text */}
+      {showDoubleScoreText && (
+        <motion.div
+          className="absolute top-1/3 left-1/2 transform -translate-x-1/2 text-white text-4xl font-bold z-30"
+          animate={{ opacity: [1, 0], scale: [1, 1.5] }}
+          transition={{ duration: 1 }}
+        >
+          DOUBLE SCORE!
+        </motion.div>
+      )}
+      
+      {/* Time Freeze Text */}
+      {freezeTime && (
+        <motion.div
+          className="absolute top-1/4 left-1/2 transform -translate-x-1/2 text-blue-300 text-3xl font-bold z-30"
+          animate={{ opacity: [1, 0.7, 1] }}
+          transition={{ duration: 0.5 }}
+        >
+          TIME FROZEN!
+        </motion.div>
+      )}
+      
       {/* Level Up */}
       {score >= level * 10 && handleLevelUp()}
     </div>
   )
-} 
+}

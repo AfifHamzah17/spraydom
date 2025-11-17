@@ -75,3 +75,65 @@ body { background: linear-gradient(180deg, #FBFBFD 0%, #F7F3FB 100%); }
     height: 180px;
   }
 }
+
+/* Custom styles for Draft Wysiwyg editor */
+.wrapper-class {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background-color: #374151;
+}
+
+.editor-class {
+  min-height: 200px;
+  padding: 1rem;
+  background-color: #374151;
+  color: white;
+}
+
+.toolbar-class {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: #4b5563;
+  padding: 0.5rem;
+  border-bottom: none;
+}
+
+.toolbar-class .rdw-option-wrapper {
+  border: 1px solid #6b7280;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.toolbar-class .rdw-option-wrapper:hover {
+  background-color: #6b7280;
+}
+
+.toolbar-class .rdw-dropdown-selectedtext {
+  color: white;
+}
+
+.toolbar-class .rdw-dropdown-carettoopen {
+  border-top-color: white;
+}
+
+.toolbar-class .rdw-dropdown-carettoclose {
+  border-bottom-color: white;
+}
+
+.editor-class .public-DraftStyleDefault-block {
+  margin: 0.5rem 0;
+}
+
+.editor-class a {
+  color: #10b981;
+  text-decoration: underline;
+}
+
+.editor-class blockquote {
+  border-left: 4px solid #10b981;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}

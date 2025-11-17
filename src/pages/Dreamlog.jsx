@@ -1,187 +1,224 @@
-// src/pages/Dreamlog.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-// Sample articles data - ini nantinya akan diambil dari backend
-const sampleArticles = [
-  {
-    id: 1,
-    title: "Understanding the Science of Sleep",
-    excerpt: "Learn about the different stages of sleep and how they affect your health and wellbeing",
-    content: "Sleep is a complex biological process that involves multiple stages. Each stage plays a crucial role in maintaining physical health, cognitive function, and emotional wellbeing...",
-    author: "Dr. Sarah Johnson",
-    date: "May 15, 2023",
-    readTime: "5 min read",
-    image: "https://via.placeholder.com/300x200?text=Sleep+Science"
-  },
-  {
-    id: 2,
-    title: "Natural Remedies for Better Sleep",
-    excerpt: "Discover natural herbs, supplements, and techniques that can help improve your sleep quality",
-    content: "Many people struggle with sleep issues but prefer natural solutions over medication. This article explores evidence-based natural remedies that can help you fall asleep faster and enjoy deeper sleep...",
-    author: "Michael Chen",
-    date: "June 2, 2023",
-    readTime: "7 min read",
-    image: "https://via.placeholder.com/300x200?text=Natural+Remedies"
-  },
-  {
-    id: 3,
-    title: "Creating the Perfect Sleep Environment",
-    excerpt: "Tips and tricks to transform your bedroom into a sanctuary for restful sleep",
-    content: "Your sleep environment plays a crucial role in the quality of your rest. From lighting to temperature to noise levels, small changes can make a big difference in how well you sleep...",
-    author: "Emma Rodriguez",
-    date: "June 18, 2023",
-    readTime: "4 min read",
-    image: "https://via.placeholder.com/300x200?text=Sleep+Environment"
-  },
-  {
-    id: 4,
-    title: "The Connection Between Diet and Sleep",
-    excerpt: "How what you eat and drink affects your sleep patterns and quality",
-    content: "Research shows a strong bidirectional relationship between diet and sleep. Certain foods and beverages can either promote or interfere with quality sleep. Understanding this connection can help you make better dietary choices...",
-    author: "Dr. James Wilson",
-    date: "July 5, 2023",
-    readTime: "6 min read",
-    image: "https://via.placeholder.com/300x200?text=Diet+and+Sleep"
-  }
-];
+import { useAuth } from '../context/AuthContext';
+import apiService from '../services/api';
+import { FaPlus, FaArrowLeft, FaClock, FaArrowRight } from 'react-icons/fa';
 
 export default function Dreamlog() {
   const [articles, setArticles] = useState([]);
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, token } = useAuth();
 
   useEffect(() => {
-    // Simulate API call to fetch articles
-    setArticles(sampleArticles);
+    const fetchArticles = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getDreamlogs();
+        
+        // Urutkan artikel berdasarkan createdAt (terbaru dulu)
+        const sortedArticles = (response.result.dreamlogs || []).sort((a, b) => {
+          // Konversi string tanggal ke objek Date untuk perbandingan
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          
+          // Urutkan dari terbaru ke terlama
+          return dateB - dateA;
+        });
+        
+        setArticles(sortedArticles);
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
   }, []);
 
   const handleArticleClick = (article) => {
-    setSelectedArticle(article);
+    navigate(`/dreamlog/${article.id}`);
   };
 
-  const handleBackToList = () => {
-    setSelectedArticle(null);
+  const handleAddArticle = () => {
+    navigate('/admin/dreamlog-create');
   };
+
+  // Fungsi untuk membersihkan Markdown dan membuat preview teks
+  const getPlainTextFromMarkdown = (markdown) => {
+    if (!markdown) return '';
+    
+    return markdown
+      // Hapus header
+      .replace(/^#{1,6}\s+/gm, '')
+      // Hapus bold
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      // Hapus italic
+      .replace(/\*(.*?)\*/g, '$1')
+      // Hapus underline
+      .replace(/<u>(.*?)<\/u>/g, '$1')
+      // Hapus link
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // Hapus blockquote
+      .replace(/^>\s+/gm, '')
+      // Hapus list
+      .replace(/^[-*+]\s+/gm, '')
+      .replace(/^\d+\.\s+/gm, '')
+      // Hapus HTML tags
+      .replace(/<[^>]*>/g, '')
+      // Hapus multiple spaces
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  // Fungsi untuk memformat tanggal
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+  };
+
+  // Fungsi untuk memformat waktu relatif (contoh: "2 jam yang lalu")
+  const formatRelativeTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return 'Baru saja';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} menit yang lalu`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} jam yang lalu`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} hari yang lalu`;
+    } else {
+      return formatDate(dateString);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-xl">Loading articles...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center text-green-500 hover:text-green-400 mb-4"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-          </svg>
-          Back to Home
-        </button>
-        
-        <h1 className="text-4xl font-bold mb-2">Dreamlog</h1>
-        <p className="text-xl text-gray-300">
+      <h1 className="text-4xl font-bold text-center">Dreamlog</h1>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/')}
+              className="flex items-center text-green-500 hover:text-green-400 mr-4"
+            >
+              <FaArrowLeft className="mr-1" /> Back to Home
+            </button>
+
+          </div>
+          
+          {token && user?.role === 'admin' && (
+            <button
+              onClick={handleAddArticle}
+              className="flex items-center bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <FaPlus className="mr-2" />
+              Add Article
+            </button>
+          )}
+        </div>
+        <p className="text-xl text-gray-300 mt-2">
           Insights and articles about sleep, dreams, and insomnia
         </p>
       </div>
 
-      {selectedArticle ? (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700"
-        >
-          <div className="mb-6">
-            <button 
-              onClick={handleBackToList}
-              className="flex items-center text-green-500 hover:text-green-400 mb-4"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-              Back to Articles
-            </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {articles.map((article) => {
+          // Ambil teks biasa dari Markdown untuk preview
+          const plainText = getPlainTextFromMarkdown(article.content);
+          const previewText = plainText.length > 100 
+            ? `${plainText.substring(0, 100)}...` 
+            : plainText;
             
-            <h2 className="text-3xl font-bold mb-4">{selectedArticle.title}</h2>
-            
-            <div className="flex flex-wrap items-center text-gray-400 mb-6">
-              <span className="flex items-center mr-4 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                </svg>
-                {selectedArticle.author}
-              </span>
-              <span className="flex items-center mr-4 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                </svg>
-                {selectedArticle.date}
-              </span>
-              <span className="flex items-center mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                </svg>
-                {selectedArticle.readTime}
-              </span>
-            </div>
-          </div>
-          
-          <div className="mb-8">
-            <img 
-              src={selectedArticle.image} 
-              alt={selectedArticle.title} 
-              className="w-full h-64 object-cover rounded-xl"
-            />
-          </div>
-          
-          <div className="prose prose-invert max-w-none">
-            <p className="text-gray-300 leading-relaxed mb-4">
-              {selectedArticle.content}
-            </p>
-            
-            <p className="text-gray-300 leading-relaxed mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.
-            </p>
-            
-            <p className="text-gray-300 leading-relaxed">
-              Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {articles.map((article) => (
+          return (
             <motion.div 
               key={article.id}
               whileHover={{ y: -5 }}
-              className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 cursor-pointer"
+              className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 cursor-pointer h-full"
               onClick={() => handleArticleClick(article)}
             >
-              <div className="md:flex">
-                <div className="md:w-1/3">
-                  <img 
-                    src={article.image} 
-                    alt={article.title} 
-                    className="w-full h-48 md:h-full object-cover"
-                  />
-                </div>
+              <div className="md:flex h-full">
+                {article.image && article.image !== "" && (
+                  <div className="md:w-1/3">
+                    <img 
+                      src={article.image} 
+                      alt={article.title} 
+                      className="w-full h-48 md:h-full object-cover"
+                    />
+                  </div>
+                )}
                 
-                <div className="p-5 md:w-2/3">
-                  <h3 className="text-xl font-bold mb-2">{article.title}</h3>
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-2">{article.excerpt}</p>
-                  
-                  <div className="flex justify-between items-center text-gray-400 text-sm">
-                    <span>{article.readTime}</span>
-                    <span className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Read More
+                <div className={`p-5 ${article.image && article.image !== "" ? 'md:w-2/3' : 'md:w-full'} flex flex-col h-full`}>
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-bold text-white">{article.title}</h3>
+                    <span className="flex items-center text-gray-400 text-xs bg-gray-900/50 px-2 py-1 rounded-full">
+                      <FaClock className="mr-1" />
+                      {formatRelativeTime(article.createdAt)}
                     </span>
+                  </div>
+                  
+                  <div className="flex-grow mb-4">
+                    <p className="text-gray-300 text-sm line-clamp-2">
+                      {previewText}
+                    </p>
+                  </div>
+                  
+                  {/* Footer di bagian paling bawah */}
+                  <div className="mt-auto pt-4 border-t border-gray-700">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400 text-sm">{article.readTime}</span>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center text-green-400 hover:text-green-300 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleArticleClick(article);
+                        }}
+                      >
+                        <span className="flex items-center px-3 py-1.5 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors">
+                          <span className="mr-1">Read More</span>
+                          <FaArrowRight className="text-xs" />
+                        </span>
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
               </div>
             </motion.div>
-          ))}
+          );
+        })}
+      </div>
+      
+      {articles.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No articles found</p>
+          {token && user?.role === 'admin' && (
+            <button
+              onClick={handleAddArticle}
+              className="mt-4 flex items-center bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium transition-colors mx-auto"
+            >
+              <FaPlus className="mr-2" />
+              Create Your First Article
+            </button>
+          )}
         </div>
       )}
     </div>
