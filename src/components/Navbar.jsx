@@ -42,78 +42,66 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-green-500">Spraydom</span>
+              <img src="/image/spraydom.png" alt="Spraydom" className="h-12 w-auto" />
             </Link>
             <div className="hidden md:block ml-10">
               <div className="flex items-baseline space-x-4">
-                <Link
-                  to="/"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/dreamlog"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Dreamlog
-                </Link>
-                <Link
-                  to="/products"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Products
-                </Link>
-                <Link
-                  to="/audio"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Audio
-                </Link>
-                {/* <Link
-                  to="/daily-routine"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Routine
-                </Link> */}
-                <Link
-                  to="/mini-games"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Games
-                </Link>
-                <Link
-                  to="/sleeptube"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Video
-                </Link>
-                <Link
-                  to="/insomnia-check"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                >
-                  Insomnia Check
-                </Link>
+               {/* test */}
               </div>
             </div>
           </div>
           
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
+              
+            <Link
+              to="/insomnia-check"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Insomnia Check
+            </Link>
+            <Link
+              to="/sleeptube"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Video
+            </Link>
+            <Link
+              to="/mini-games"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Games
+            </Link>
+            <Link
+              to="/audio"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Audio
+            </Link>
+            <Link
+              to="/products"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Products
+            </Link>
+            <Link
+              to="/dreamlog"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Dreamlog
+            </Link>
+            <Link
+              to="/"
+              className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
+            >
+              Home
+            </Link>
               {isAuthenticated ? (
                 <div className="relative ml-3">
                   <div className="flex items-center space-x-4">
                     <span className="text-sm text-gray-300">
                       Welcome, {user?.nama || user?.email}
                     </span>
-                    {user?.role === 'admin' && (
-                      <Link
-                        to="/admin"
-                        className="px-3 py-2 rounded-md text-sm font-medium bg-green-600 text-white hover:bg-green-500 transition-all duration-200"
-                      >
-                        Admin Panel
-                      </Link>
-                    )}
                     <button
                       onClick={handleLogout}
                       className="flex items-center text-sm text-gray-300 hover:text-white"
@@ -125,18 +113,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
-                  <Link
-                    to="/login"
-                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="px-3 py-2 rounded-md text-sm font-medium bg-green-600 text-white hover:bg-green-500 transition-all duration-200"
-                  >
-                    Register
-                  </Link>
+
                 </div>
               )}
             </div>
@@ -157,6 +134,11 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden bg-gray-900/95 backdrop-blur-sm">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {isAuthenticated ? (
+                <div className="px-3 py-2 text-sm text-gray-300">
+                  Welcome to spraydom, Admin {user?.nama ? user?.nama : user?.email}
+                </div>
+            ) : null}
             <Link
               to="/"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
@@ -216,18 +198,6 @@ export default function Navbar() {
             
             {isAuthenticated ? (
               <>
-                <div className="px-3 py-2 text-sm text-gray-300">
-                  Welcome, {user?.nama || user?.email}
-                </div>
-                {user?.role === 'admin' && (
-                  <Link
-                    to="/admin"
-                    className="block px-3 py-2 rounded-md text-base font-medium bg-green-600 text-white hover:bg-green-500 transition-all duration-200"
-                    onClick={toggleMenu}
-                  >
-                    Admin Panel
-                  </Link>
-                )}
                 <button
                   onClick={() => {
                     handleLogout()
@@ -241,20 +211,6 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
-                  onClick={toggleMenu}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="block px-3 py-2 rounded-md text-base font-medium bg-green-600 text-white hover:bg-green-500 transition-all duration-200"
-                  onClick={toggleMenu}
-                >
-                  Register
-                </Link>
               </>
             )}
           </div>

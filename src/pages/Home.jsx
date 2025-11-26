@@ -69,7 +69,7 @@ export default function Home() {
       {/* Greeting Section */}
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-2">
-          {greeting}, {user?.name || 'User'}!
+          {greeting}, {user?.name || 'Folks!'}
         </h1>
         <p className="text-xl text-gray-300">
           Discover natural fragrances from around the world in every spray
@@ -278,11 +278,11 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mr-3">
-                <span className="font-bold">A</span>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mr-3">
+                <img src="/image/man-bg.png" alt="A" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Alex</h4>
+                <h4 className="font-bold">Hamzah</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -297,11 +297,11 @@ export default function Home() {
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mr-3">
-                <span className="font-bold">B</span>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mr-3">
+                <img src="/image/woman-bg.png" alt="B" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Brian</h4>
+                <h4 className="font-bold">Sofia</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -316,11 +316,11 @@ export default function Home() {
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mr-3">
-                <span className="font-bold">C</span>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mr-3">
+                <img src="/image/student-bg.png" alt="C" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Claire</h4>
+                <h4 className="font-bold">Zulfan</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(4)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">

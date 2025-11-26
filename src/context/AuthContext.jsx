@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     // Check if user is logged in on app start
@@ -24,6 +25,17 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
+    }
+    
+    // Load favorites from localStorage
+    const storedFavorites = localStorage.getItem('favorites');
+    if (storedFavorites) {
+      try {
+        setFavorites(JSON.parse(storedFavorites));
+      } catch (error) {
+        console.error("Failed to parse favorites from localStorage:", error);
+        localStorage.removeItem('favorites');
+      }
     }
     
     setLoading(false);
@@ -43,13 +55,41 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  // Favorites functions
+  const addToFavorites = (product) => {
+    const isAlreadyFavorited = favorites.some(fav => fav.id === product.id);
+    if (isAlreadyFavorited) {
+      return false; // Already in favorites
+    }
+
+    const newFavorites = [...favorites, product];
+    setFavorites(newFavorites);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    return true; // Successfully added
+  };
+
+  const removeFromFavorites = (productId) => {
+    const newFavorites = favorites.filter(p => p.id !== productId);
+    setFavorites(newFavorites);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    return true; // Successfully removed
+  };
+
+  const isFavorite = (productId) => {
+    return favorites.some(fav => fav.id === productId);
+  };
+
   const value = {
     user,
     token,
     login,
     logout,
     loading,
-    isAuthenticated: !!user && !!token
+    isAuthenticated: !!user && !!token,
+    favorites,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite
   };
 
   return (

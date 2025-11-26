@@ -5,9 +5,9 @@ import { useAuth } from '../context/AuthContext'
 import SpotifyPlayer from '../components/SpotifyPlayer'
 import apiService from '../services/api'
 import { toast } from 'react-hot-toast'
-import { FaPlus, FaSearch, FaFilter, FaEdit, FaTrash } from 'react-icons/fa'
+import { FaPlus, FaSearch, FaFilter, FaEdit, FaTrash, FaSortAmountDown } from 'react-icons/fa'
 
-// Mapping kategori ke gambar
+// Mapping category to image
 const categoryImages = {
   'All': '/images/all-categories.jpg',
   'Local Music': '/images/musik-lokal.jpg',
@@ -27,6 +27,7 @@ export default function Audio() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [sortBy, setSortBy] = useState('title-asc')
   const { user } = useAuth()
   
   // Load audio data from API
@@ -55,7 +56,7 @@ export default function Audio() {
     fetchAudios()
   }, [])
   
-  // Filter audios based on selected category and search term
+  // Filter and sort audios based on selected category, search term, and sort option
   const filteredAudios = audios.filter(audio => {
     const matchesCategory = selectedCategory === 'All' || audio.category === selectedCategory
     const matchesSearch = searchTerm === '' || 
@@ -63,18 +64,46 @@ export default function Audio() {
       audio.description.toLowerCase().includes(searchTerm.toLowerCase())
     
     return matchesCategory && matchesSearch
+  }).sort((a, b) => {
+    // Sorting logic
+    switch (sortBy) {
+      case 'title-asc':
+        return a.title.localeCompare(b.title)
+      case 'title-desc':
+        return b.title.localeCompare(a.title)
+      case 'artist-asc':
+        return a.artist.localeCompare(b.artist)
+      case 'artist-desc':
+        return b.artist.localeCompare(a.artist)
+      case 'duration-asc':
+        // Convert duration to seconds for comparison
+        const parseDuration = (duration) => {
+          const parts = duration.split(':')
+          return parseInt(parts[0]) * 60 + parseInt(parts[1])
+        }
+        return parseDuration(a.duration) - parseDuration(b.duration)
+      case 'duration-desc':
+        const parseDurationDesc = (duration) => {
+          const parts = duration.split(':')
+          return parseInt(parts[0]) * 60 + parseInt(parts[1])
+        }
+        return parseDurationDesc(b.duration) - parseDurationDesc(a.duration)
+      default:
+        return 0
+    }
   })
   
   // Handle play/pause
-const handlePlayPause = (track, index) => {
-  if (currentTrack && currentTrack.id === track.id) {
-    setIsPlaying(!isPlaying);
-  } else {
-    setCurrentTrack(track);
-    setCurrentTrackIndex(index);
-    setIsPlaying(true);
-  }
-};
+  const handlePlayPause = (track, index) => {
+    if (currentTrack && currentTrack.id === track.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      setCurrentTrack(track);
+      setCurrentTrackIndex(index);
+      setIsPlaying(true);
+    }
+  };
+  
   // Handle next track
   const handleNext = () => {
     const nextIndex = (currentTrackIndex + 1) % filteredAudios.length
@@ -140,9 +169,10 @@ const handlePlayPause = (track, index) => {
           )}
         </div>
 
-        {/* Search and Filter */}
+        {/* Search, Filter, and Sort */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 mb-6 border border-gray-700">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search Input */}
             <div className="flex-1 relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -154,6 +184,7 @@ const handlePlayPause = (track, index) => {
               />
             </div>
             
+            {/* Filter Dropdown */}
             <div className="flex items-center gap-2">
               <FaFilter className="text-gray-400" />
               <select
@@ -164,6 +195,23 @@ const handlePlayPause = (track, index) => {
                 {categories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
+              </select>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <FaSortAmountDown className="text-gray-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-white"
+              >
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+                <option value="artist-asc">Artist (A-Z)</option>
+                <option value="artist-desc">Artist (Z-A)</option>
+                <option value="duration-asc">Duration (Short to Long)</option>
+                <option value="duration-desc">Duration (Long to Short)</option>
               </select>
             </div>
           </div>

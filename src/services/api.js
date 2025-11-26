@@ -18,8 +18,26 @@ class ApiService {
     const url = `${this.baseURL}${endpoint}`;
     
     // Public endpoints that don't need a token
-    const publicEndpoints = ['/auth/login', '/auth/register', '/contact'];
-    const isPublicEndpoint = publicEndpoints.some(pubEndpoint => endpoint.startsWith(pubEndpoint));
+    const publicEndpoints = [
+      '/auth/login', 
+      '/auth/register', 
+      '/contact',
+      '/dreamlogs',
+      '/products',
+      '/audios',
+      '/videos'
+    ];
+    
+    // Check if this is a GET request to public resources
+    const isPublicGetRequest = 
+      (endpoint.startsWith('/dreamlogs') && (!options.method || options.method === 'GET')) ||
+      (endpoint.startsWith('/products') && (!options.method || options.method === 'GET')) ||
+      (endpoint.startsWith('/audios') && (!options.method || options.method === 'GET')) ||
+      (endpoint.startsWith('/videos') && (!options.method || options.method === 'GET'));
+    
+    const isPublicEndpoint = publicEndpoints.some(pubEndpoint => 
+      endpoint.startsWith(pubEndpoint)
+    ) || isPublicGetRequest;
 
     // Get the token from localStorage for every request
     const currentToken = localStorage.getItem('token');
@@ -127,18 +145,20 @@ class ApiService {
     throw new Error(response.message || 'Failed to create dreamlog');
   }
 
-  async updateDreamlog(id, dreamlogData) {
-    const response = await this.request(`/dreamlogs/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(dreamlogData),
-    });
-    
-    if (response.success) {
-      return response.result.dreamlog;
-    }
-    
-    throw new Error(response.message || 'Failed to update dreamlog');
+async updateDreamlog(id, dreamlogData) {
+  const response = await this.request(`/dreamlogs/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dreamlogData),
+  });
+  
+  // PERBAIKAN: Percayai properti 'success' dari respons backend
+  if (response.success) {
+    return response.result.dreamlog;
   }
+  
+  // Jika success-nya false, lempar error dengan pesan dari backend
+  throw new Error(response.message || 'Failed to update dreamlog');
+}
 
   async deleteDreamlog(id) {
     return this.request(`/dreamlogs/${id}`, {
@@ -146,237 +166,218 @@ class ApiService {
     });
   }
 
-  // --- UPLOAD METHOD ---
-  async uploadImage(file, folder = 'dreamlogs') {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('folder', folder);
-
-    const response = await this.request('/upload/image', {
-      method: 'POST',
-      body: formData,
-    });
-    
-    if (response.success) {
-      return response.result.url;
-    }
-    
-    throw new Error(response.message || 'Image upload failed');
+  // --- PRODUCT METHODS ---
+  async getProducts() {
+    return this.request('/products');
   }
 
-// src/services/api.js (add these methods if not already present)
-
-// --- PRODUCT METHODS ---
-async getProducts() {
-  return this.request('/products');
-}
-
-async getProduct(id) {
-  return this.request(`/products/${id}`);
-}
-
-async createProduct(productData) {
-  // Check if productData is FormData
-  if (productData instanceof FormData) {
-    const response = await this.request('/products', {
-      method: 'POST',
-      body: productData, // Don't stringify FormData
-    });
-    
-    if (response.success) {
-      return response.result.product;
-    }
-    
-    throw new Error(response.message || 'Failed to create product');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request('/products', {
-      method: 'POST',
-      body: JSON.stringify(productData),
-    });
-    
-    if (response.success) {
-      return response.result.product;
-    }
-    
-    throw new Error(response.message || 'Failed to create product');
+  async getProduct(id) {
+    return this.request(`/products/${id}`);
   }
-}
 
-async updateProduct(id, productData) {
-  // Check if productData is FormData
-  if (productData instanceof FormData) {
-    const response = await this.request(`/products/${id}`, {
-      method: 'PUT',
-      body: productData, // Don't stringify FormData
-    });
-    
-    if (response.success) {
-      return response.result.product;
+  async createProduct(productData) {
+    // Check if productData is FormData
+    if (productData instanceof FormData) {
+      const response = await this.request('/products', {
+        method: 'POST',
+        body: productData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.product;
+      }
+      
+      throw new Error(response.message || 'Failed to create product');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request('/products', {
+        method: 'POST',
+        body: JSON.stringify(productData),
+      });
+      
+      if (response.success) {
+        return response.result.product;
+      }
+      
+      throw new Error(response.message || 'Failed to create product');
     }
-    
-    throw new Error(response.message || 'Failed to update product');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request(`/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(productData),
-    });
-    
-    if (response.success) {
-      return response.result.product;
-    }
-    
-    throw new Error(response.message || 'Failed to update product');
   }
-}
 
-async deleteProduct(id) {
-  return this.request(`/products/${id}`, {
-    method: 'DELETE',
-  });
-}
-// --- AUDIO METHODS ---
-async getAudios() {
-  return this.request('/audios');
-}
-
-async getAudio(id) {
-  return this.request(`/audios/${id}`);
-}
-
-async createAudio(audioData) {
-  // Check if audioData is FormData
-  if (audioData instanceof FormData) {
-    const response = await this.request('/audios', {
-      method: 'POST',
-      body: audioData, // Don't stringify FormData
-    });
-    
-    if (response.success) {
-      return response.result.audio;
+  async updateProduct(id, productData) {
+    // Check if productData is FormData
+    if (productData instanceof FormData) {
+      const response = await this.request(`/products/${id}`, {
+        method: 'PUT',
+        body: productData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.product;
+      }
+      
+      throw new Error(response.message || 'Failed to update product');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request(`/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(productData),
+      });
+      
+      if (response.success) {
+        return response.result.product;
+      }
+      
+      throw new Error(response.message || 'Failed to update product');
     }
-    
-    throw new Error(response.message || 'Failed to create audio');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request('/audios', {
-      method: 'POST',
-      body: JSON.stringify(audioData),
-    });
-    
-    if (response.success) {
-      return response.result.audio;
-    }
-    
-    throw new Error(response.message || 'Failed to create audio');
   }
-}
 
-async updateAudio(id, audioData) {
-  // Check if audioData is FormData
-  if (audioData instanceof FormData) {
-    const response = await this.request(`/audios/${id}`, {
-      method: 'PUT',
-      body: audioData, // Don't stringify FormData
+  async deleteProduct(id) {
+    return this.request(`/products/${id}`, {
+      method: 'DELETE',
     });
-    
-    if (response.success) {
-      return response.result.audio;
-    }
-    
-    throw new Error(response.message || 'Failed to update audio');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request(`/audios/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(audioData),
-    });
-    
-    if (response.success) {
-      return response.result.audio;
-    }
-    
-    throw new Error(response.message || 'Failed to update audio');
   }
-}
 
-async deleteAudio(id) {
-  return this.request(`/audios/${id}`, {
-    method: 'DELETE',
-  });
-}
-// --- VIDEO METHODS ---
-async getVideos() {
-  return this.request('/videos');
-}
-
-async getVideo(id) {
-  return this.request(`/videos/${id}`);
-}
-
-async createVideo(videoData) {
-  // Check if videoData is FormData
-  if (videoData instanceof FormData) {
-    const response = await this.request('/videos', {
-      method: 'POST',
-      body: videoData, // Don't stringify FormData
-    });
-    
-    if (response.success) {
-      return response.result.video;
-    }
-    
-    throw new Error(response.message || 'Failed to create video');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request('/videos', {
-      method: 'POST',
-      body: JSON.stringify(videoData),
-    });
-    
-    if (response.success) {
-      return response.result.video;
-    }
-    
-    throw new Error(response.message || 'Failed to create video');
+  // --- AUDIO METHODS ---
+  async getAudios() {
+    return this.request('/audios');
   }
-}
 
-async updateVideo(id, videoData) {
-  // Check if videoData is FormData
-  if (videoData instanceof FormData) {
-    const response = await this.request(`/videos/${id}`, {
-      method: 'PUT',
-      body: videoData, // Don't stringify FormData
-    });
-    
-    if (response.success) {
-      return response.result.video;
-    }
-    
-    throw new Error(response.message || 'Failed to update video');
-  } else {
-    // Handle regular JSON data
-    const response = await this.request(`/videos/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(videoData),
-    });
-    
-    if (response.success) {
-      return response.result.video;
-    }
-    
-    throw new Error(response.message || 'Failed to update video');
+  async getAudio(id) {
+    return this.request(`/audios/${id}`);
   }
-}
 
-async deleteVideo(id) {
-  return this.request(`/videos/${id}`, {
-    method: 'DELETE',
-  });
-}
+  async createAudio(audioData) {
+    // Check if audioData is FormData
+    if (audioData instanceof FormData) {
+      const response = await this.request('/audios', {
+        method: 'POST',
+        body: audioData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.audio;
+      }
+      
+      throw new Error(response.message || 'Failed to create audio');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request('/audios', {
+        method: 'POST',
+        body: JSON.stringify(audioData),
+      });
+      
+      if (response.success) {
+        return response.result.audio;
+      }
+      
+      throw new Error(response.message || 'Failed to create audio');
+    }
+  }
 
+  async updateAudio(id, audioData) {
+    // Check if audioData is FormData
+    if (audioData instanceof FormData) {
+      const response = await this.request(`/audios/${id}`, {
+        method: 'PUT',
+        body: audioData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.audio;
+      }
+      
+      throw new Error(response.message || 'Failed to update audio');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request(`/audios/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(audioData),
+      });
+      
+      if (response.success) {
+        return response.result.audio;
+      }
+      
+      throw new Error(response.message || 'Failed to update audio');
+    }
+  }
+
+  async deleteAudio(id) {
+    return this.request(`/audios/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // --- VIDEO METHODS ---
+  async getVideos() {
+    return this.request('/videos');
+  }
+
+  async getVideo(id) {
+    return this.request(`/videos/${id}`);
+  }
+
+  async createVideo(videoData) {
+    // Check if videoData is FormData
+    if (videoData instanceof FormData) {
+      const response = await this.request('/videos', {
+        method: 'POST',
+        body: videoData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.video;
+      }
+      
+      throw new Error(response.message || 'Failed to create video');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request('/videos', {
+        method: 'POST',
+        body: JSON.stringify(videoData),
+      });
+      
+      if (response.success) {
+        return response.result.video;
+      }
+      
+      throw new Error(response.message || 'Failed to create video');
+    }
+  }
+
+  async updateVideo(id, videoData) {
+    // Check if videoData is FormData
+    if (videoData instanceof FormData) {
+      const response = await this.request(`/videos/${id}`, {
+        method: 'PUT',
+        body: videoData, // Don't stringify FormData
+      });
+      
+      if (response.success) {
+        return response.result.video;
+      }
+      
+      throw new Error(response.message || 'Failed to update video');
+    } else {
+      // Handle regular JSON data
+      const response = await this.request(`/videos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(videoData),
+      });
+      
+      if (response.success) {
+        return response.result.video;
+      }
+      
+      throw new Error(response.message || 'Failed to update video');
+    }
+  }
+
+  async deleteVideo(id) {
+    return this.request(`/videos/${id}`, {
+      method: 'DELETE',
+    });
+  }
 
   // --- USER METHODS ---
   async getUsers() {
@@ -428,6 +429,24 @@ async deleteVideo(id) {
     return this.request(`/contact/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // --- UPLOAD METHOD ---
+  async uploadImage(file, folder = 'dreamlogs') {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', folder);
+
+    const response = await this.request('/upload/image', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (response.success) {
+      return response.result.url;
+    }
+    
+    throw new Error(response.message || 'Image upload failed');
   }
 }
 
