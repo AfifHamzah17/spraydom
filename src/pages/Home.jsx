@@ -45,7 +45,7 @@ export default function Home() {
     
     fetchProducts();
     
-    // Set greeting based on time of day
+    // Set greeting based on time of day ganti
     const hour = new Date().getHours();
     if (hour < 12) {
       setGreeting('Good Morning');
@@ -69,7 +69,7 @@ export default function Home() {
       {/* Greeting Section */}
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-2">
-          {greeting}, {user?.name || 'Folks!'}
+          {greeting}, {user?.name || 'Dreamer!'}
         </h1>
         <p className="text-xl text-gray-300">
           Discover natural fragrances from around the world in every spray

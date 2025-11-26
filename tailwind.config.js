@@ -6,11 +6,10 @@ content: [
 theme: {
 extend: {
 colors: {
-primary: '#39375B',
-secondary: '#745C97',
-accent: '#D597CE',
-pink: '#F5B0CB',
-light: '#EBEBEB'
+primary: '#0C2B4E',
+secondary: '#1A3D64',
+third: '#1D546C',
+fourth: '#F4F4F4',
 }
 }
 },

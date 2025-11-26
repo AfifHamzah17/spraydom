@@ -53,14 +53,14 @@ export default function Navbar() {
           
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              
+               
             <Link
               to="/insomnia-check"
               className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
             >
               Insomnia Check
             </Link>
-            <Link
+{/*            <Link
               to="/sleeptube"
               className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
             >
@@ -95,7 +95,7 @@ export default function Navbar() {
               className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
             >
               Home
-            </Link>
+            </Link> */}
               {isAuthenticated ? (
                 <div className="relative ml-3">
                   <div className="flex items-center space-x-4">

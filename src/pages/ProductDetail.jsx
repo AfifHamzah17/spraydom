@@ -232,15 +232,15 @@ export default function ProductDetail() {
               <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
               
               {/* Rating and Reviews */}
-              {/* <div className="flex items-center mb-4">
+              <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400 mr-2">
                   {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className={i < Math.floor(product.rating || 0) ? "" : "text-gray-600"} />
+                    <FaStar key={i} className={i < Math.floor(product.rating || 5) ? "" : "text-gray-600"} />
                   ))}
                 </div>
-                <span className="text-gray-400 mr-2">{product.rating || 0}.0</span>
-                <span className="text-gray-400">({product.reviews || 0} reviews)</span>
-              </div> */}
+                <span className="text-gray-400 mr-2">{product.rating || 5}.0</span>
+                {/* <span className="text-gray-400">({product.reviews || 0} reviews)</span> */}
+              </div>
             </div>
             
             {/* Price Section */}
@@ -336,7 +336,7 @@ export default function ProductDetail() {
             </div>
             
             {/* Product Benefits */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               <div className="flex items-center text-gray-300">
                 <FaTruck className="text-green-500 mr-2" />
                 <span className="text-sm">Free Shipping</span>
@@ -349,7 +349,7 @@ export default function ProductDetail() {
                 <FaUndo className="text-green-500 mr-2" />
                 <span className="text-sm">30-Day Returns</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         
