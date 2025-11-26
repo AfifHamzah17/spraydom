@@ -45,7 +45,7 @@ export default function Home() {
     
     fetchProducts();
     
-    // Set greeting based on time of day ganti
+    // Set greeting based on time of day ganti 
     const hour = new Date().getHours();
     if (hour < 12) {
       setGreeting('Good Morning');
