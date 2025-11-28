@@ -31,9 +31,11 @@ import LoginView from './pages/LoginView'
 import RegisterView from './pages/RegisterView'
 import FavoriteProducts from './pages/FavoriteProducts'
 
-// HAPUS import react-toastify
-// import 'react-toastify/dist/ReactToastify.css'
-// import { ToastContainer } from 'react-toastify'
+// Import help pages
+import FaqPage from './pages/help/FaqPage'
+import OrderingProcedurePage from './pages/help/OrderingProcedurePage'
+import PrivacyPolicyPage from './pages/help/PrivacyPolicyPage'
+import TermsPage from './pages/help/TermsPage'
 
 // TAMBAHKAN import react-hot-toast
 import { Toaster } from 'react-hot-toast'
@@ -88,6 +90,12 @@ function App() {
             
             {/* Favorites route - public access */}
             <Route path="/favorites" element={<FavoriteProducts />} />
+            
+            {/* Help pages routes */}
+            <Route path="/help/faq" element={<FaqPage />} />
+            <Route path="/help/ordering-procedure" element={<OrderingProcedurePage />} />
+            <Route path="/help/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/help/terms" element={<TermsPage />} />
             
             {/* Product management routes */}
             <Route path="/products/add" element={

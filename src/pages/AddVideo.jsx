@@ -225,12 +225,12 @@ const handleSubmit = async (e) => {
                   required
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-white transition-all duration-200"
                 >
-                  <option value="sleep-music">Musik Tidur</option>
-                  <option value="meditation">Meditasi</option>
-                  <option value="nature-sounds">Suara Alam</option>
+                  <option value="sleep-music">Sleep Music</option>
+                  <option value="meditation">Meditation</option>
+                  <option value="nature-sounds">Nature Sounds</option>
                   <option value="white-noise">White Noise</option>
-                  <option value="guided-meditation">Meditasi Terpandu</option>
-                  <option value="breathing">Pernapasan</option>
+                  <option value="guided-meditation">Guided Meditation</option>
+                  <option value="breathing">Breathing</option>
                   <option value="asmr">ASMR</option>
                 </select>
               </div>

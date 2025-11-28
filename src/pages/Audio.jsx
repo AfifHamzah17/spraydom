@@ -154,7 +154,7 @@ export default function Audio() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-5xl font-bold mb-4">Audio</h1>
+            <h1 className="text-3xl font-bold mb-2">Sleephonia</h1>
             <p className="text-gray-400">Explore our collection of relaxing sounds, music, and stories</p>
           </div>
           

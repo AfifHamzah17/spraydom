@@ -1,5 +1,6 @@
 // src/components/Footer.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -9,32 +10,32 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4">Spraydom</h3>
             <p className="text-gray-400">
-              Koleksi aromaterapi premium dari berbagai penjuru dunia
+              Premium aromatherapy collection from the world
             </p>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Produk</h4>
+            <h4 className="font-semibold mb-4">Products</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Semua Produk</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Koleksi Nusantara</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Koleksi Arabic</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Best Seller</a></li>
+              <li><Link to="/products" className="hover:text-white transition-colors">All Products</Link></li>
+              <li><Link to="/products?category=nusantara" className="hover:text-white transition-colors">Nusantara Collection</Link></li>
+              <li><Link to="/products?category=arabic" className="hover:text-white transition-colors">Arabic Collection</Link></li>
+              <li><Link to="/products?filter=bestseller" className="hover:text-white transition-colors">Best Seller</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Bantuan</h4>
+            <h4 className="font-semibold mb-4">Help</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Cara Pemesanan</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Syarat & Ketentuan</a></li>
+              <li><Link to="/help/ordering-procedure" className="hover:text-white transition-colors">Ordering Procedure</Link></li>
+              <li><Link to="/help/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+              <li><Link to="/help/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/help/terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Kontak</h4>
+            <h4 className="font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-400">
               <li className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">

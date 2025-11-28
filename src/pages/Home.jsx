@@ -47,13 +47,18 @@ export default function Home() {
     
     // Set greeting based on time of day ganti 
     const hour = new Date().getHours();
+    // console.log('Current hour:', hour); 
+
     if (hour < 12) {
       setGreeting('Good Morning');
-    } else if (hour < 18) {
+    } else if (hour < 18) { // 12:00 PM - 5:59 PM
       setGreeting('Good Afternoon');
-    } else {
+    } else if (hour < 21) { // 6:00 PM - 8:59 PM
       setGreeting('Good Evening');
+    } else { // 9:00 PM onwards
+      setGreeting('Good Night');
     }
+
   }, []);
 
   if (loading) {
@@ -72,7 +77,7 @@ export default function Home() {
           {greeting}, {user?.name || 'Dreamer!'}
         </h1>
         <p className="text-xl text-gray-300">
-          Discover natural fragrances from around the world in every spray
+          Discover your smart companion for better sleep and calmer nights.
         </p>
       </div>
 
@@ -282,7 +287,7 @@ export default function Home() {
                 <img src="/image/man-bg.png" alt="A" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Hamzah</h4>
+                <h4 className="font-bold">Wan Queen </h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -292,7 +297,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"The Nusantara Spray scent is so calming. I use it every day in my workspace."</p>
+            <p className="text-gray-300">"The aroma is incredibly calming—just one spray and I fall asleep much faster."</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
@@ -301,7 +306,7 @@ export default function Home() {
                 <img src="/image/woman-bg.png" alt="B" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Sofia</h4>
+                <h4 className="font-bold">Siti Sari</h4>
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -311,7 +316,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"The Arabic Spray adds a touch of luxury to my home. The fragrance is long-lasting and very refreshing."</p>
+            <p className="text-gray-300">“Simple, effective, and smells amazing. This website has become part of my nightly routine.”</p>
           </div>
           
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
@@ -320,20 +325,17 @@ export default function Home() {
                 <img src="/image/student-bg.png" alt="C" className="h-16 w-16" />
               </div>
               <div>
-                <h4 className="font-bold">Zulfan</h4>
+                <h4 className="font-bold">Mr. Mulyadi</h4>
                 <div className="flex text-yellow-400">
-                  {[...Array(4)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => (
                     <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
                 </div>
               </div>
             </div>
-            <p className="text-gray-300">"Excellent service and quality products. I've become a loyal Spraydom customer."</p>
+            <p className="text-gray-300">"Spraydom really improved my sleep quality. I wake up feeling fresher every morning!"</p>
           </div>
         </div>
       </div>

@@ -40,29 +40,27 @@ export default function VideoDetail() {
   useEffect(() => {
     if (!video) return; // Wait until we have video details
     
-    const fetchRelatedVideos = async () => {
+    const fetchAndFilterRelatedVideos = async () => {
       try {
         setRelatedLoading(true);
         
-        // Option 1: Use a dedicated related videos endpoint if available
-        // const response = await apiService.getRelatedVideos(video.id, video.category);
-        
-        // Option 2: Use existing endpoint with parameters
-        const response = await apiService.getVideos({
-          category: video.category,
-          limit: 8,
-          exclude: id
-        });
+        // Fetch ALL videos from the backend
+        const response = await apiService.getVideos();
         
         if (response && response.result && response.result.videos) {
-          // Sort by relevance (newest first)
+          // Now, filter and sort the videos on the frontend
           const sortedRelated = response.result.videos
-            .filter(v => v.id !== id) // Double-check to exclude current video
+            .filter(v => {
+              // 1. Exclude the current video
+              if (v.id === id) return false;
+              // 2. Include only videos from the same category
+              return v.category === video.category;
+            })
             .sort((a, b) => {
-              // Sort by creation date (newest first)
+              // 3. Sort by creation date (newest first)
               return new Date(b.createdAt) - new Date(a.createdAt);
             })
-            .slice(0, 6); // Show up to 6 related videos
+            .slice(0, 6); // 4. Show up to 6 related videos
           
           setRelatedVideos(sortedRelated);
         }
@@ -74,10 +72,11 @@ export default function VideoDetail() {
       }
     };
 
-    fetchRelatedVideos();
-  }, [video]);
+    fetchAndFilterRelatedVideos();
+  }, [video, id]); // Added 'id' to the dependency array
 
   const formatDuration = (seconds) => {
+    if (!seconds) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;

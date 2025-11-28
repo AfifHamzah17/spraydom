@@ -60,13 +60,13 @@ export default function Navbar() {
             >
               Insomnia Check
             </Link>
-{/*            <Link
-              to="/sleeptube"
+          {/*        <Link
+              to="/products"
               className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
             >
-              Video
+              Products
             </Link>
-            <Link
+           <Link
               to="/mini-games"
               className="px-5 py-4 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
             >
