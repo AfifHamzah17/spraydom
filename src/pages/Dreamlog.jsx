@@ -142,6 +142,34 @@ export default function Dreamlog() {
     }
   };
 
+  // Function to get category display name
+  const getCategoryDisplayName = (category) => {
+    const categories = {
+      'general': 'General',
+      'nightmare': 'Nightmare',
+      'lucid-dream': 'Lucid Dream',
+      'recurring-dream': 'Recurring Dream',
+      'prophetic-dream': 'Prophetic Dream',
+      'healing-dream': 'Healing Dream',
+      'epic-dream': 'Epic Dream'
+    };
+    return categories[category] || category;
+  };
+
+  // Function to get category color
+  const getCategoryColor = (category) => {
+    const colors = {
+      'general': 'bg-blue-600',
+      'nightmare': 'bg-red-600',
+      'lucid-dream': 'bg-purple-600',
+      'recurring-dream': 'bg-yellow-600',
+      'prophetic-dream': 'bg-indigo-600',
+      'healing-dream': 'bg-green-600',
+      'epic-dream': 'bg-pink-600'
+    };
+    return colors[category] || 'bg-gray-600';
+  };
+
   // Skeleton Loader Component for Article Cards
   const ArticleSkeleton = () => (
     <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 animate-pulse">
@@ -152,7 +180,10 @@ export default function Dreamlog() {
         <div className="p-5 md:w-2/3 flex flex-col h-full">
           <div className="flex justify-between items-start mb-3">
             <div className="h-6 bg-gray-700 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-700 rounded w-24"></div>
+            <div className="flex gap-2">
+              <div className="h-4 bg-gray-700 rounded w-16"></div>
+              <div className="h-4 bg-gray-700 rounded w-24"></div>
+            </div>
           </div>
           <div className="flex-grow mb-4">
             <div className="h-3 bg-gray-700 rounded w-full mb-2"></div>
@@ -250,10 +281,13 @@ export default function Dreamlog() {
                 className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-white"
               >
                 <option value="all">All Categories</option>
-                <option value="sleep">Sleep</option>
-                <option value="dreams">Dreams</option>
-                <option value="insomnia">Insomnia</option>
-                <option value="health">Health</option>
+                <option value="general">General</option>
+                <option value="nightmare">Nightmare</option>
+                <option value="lucid-dream">Lucid Dream</option>
+                <option value="recurring-dream">Recurring Dream</option>
+                <option value="prophetic-dream">Prophetic Dream</option>
+                <option value="healing-dream">Healing Dream</option>
+                <option value="epic-dream">Epic Dream</option>
               </select>
             </div>
 
@@ -304,10 +338,18 @@ export default function Dreamlog() {
                   <div className={`p-5 ${article.image && article.image !== "" ? 'md:w-2/3' : 'md:w-full'} flex flex-col h-full`}>
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-bold text-white">{article.title}</h3>
-                      <span className="flex items-center text-gray-400 text-xs bg-gray-900/50 px-2 py-1 rounded-full">
-                        <FaClock className="mr-1" />
-                        {formatRelativeTime(article.createdAt)}
-                      </span>
+                      <div className="flex gap-2">
+                        {/* Category Badge - NEW */}
+                        {article.category && (
+                          <span className={`text-white text-xs px-2 py-1 rounded-full ${getCategoryColor(article.category)}`}>
+                            {getCategoryDisplayName(article.category)}
+                          </span>
+                        )}
+                        <span className="flex items-center text-gray-400 text-xs bg-gray-900/50 px-2 py-1 rounded-full">
+                          <FaClock className="mr-1" />
+                          {formatRelativeTime(article.createdAt)}
+                        </span>
+                      </div>
                     </div>
                     
                     <div className="flex-grow mb-4">
@@ -316,7 +358,7 @@ export default function Dreamlog() {
                       </p>
                     </div>
                     
-                    {/* Footer at the very bottom */}
+                    {/* Footer at very bottom */}
                     <div className="mt-auto pt-4 border-t border-gray-700">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">{article.readTime}</span>

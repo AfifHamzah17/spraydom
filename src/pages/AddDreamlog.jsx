@@ -21,7 +21,8 @@ export default function AddDreamlog() {
     author: user?.nama || '',
     date: new Date().toISOString().split('T')[0],
     readTime: '5 min read',
-    image: ''
+    image: '',
+    category: 'general' // Add category with default value
   });
   
   const [imageFile, setImageFile] = useState(null);
@@ -274,7 +275,7 @@ export default function AddDreamlog() {
 
 [Link ke Google](https://www.google.com)
 
-[Link ke Wikipedia](https://www.wikipedia.org)
+[Link ke Wikipedia](https://www.wikipedia.com)
 
 Kode inline: \`console.log("Hello World");\`
 
@@ -387,6 +388,25 @@ Ini adalah paragraf lain dengan **teks tebal di tengah** dan *teks miring* juga.
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-white transition-all duration-200"
                   placeholder="Article title"
                 />
+              </div>
+              
+              {/* Category - NEW FIELD */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Category
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-white transition-all duration-200"
+                >
+                  <option value="general">General</option>
+                  <option value="sleep">Sleep</option>
+                  <option value="dreams">Dreams</option>
+                  <option value="insomnia">Insomnia</option>
+                  <option value="health">Health</option>
+                </select>
               </div>
               
               {/* Author */}

@@ -33,7 +33,8 @@ export default function DreamlogDetail() {
   const [editForm, setEditForm] = useState({
     title: '',
     content: '',
-    image: ''
+    image: '',
+    category: 'general' // Add category with default value
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { id } = useParams();
@@ -51,7 +52,8 @@ export default function DreamlogDetail() {
           setEditForm({
             title: dreamlogData.title,
             content: dreamlogData.content,
-            image: dreamlogData.image
+            image: dreamlogData.image,
+            category: dreamlogData.category || 'general' // Include category with fallback
           });
         } else {
           toast.error(response.message || 'Gagal memuat artikel');
@@ -99,7 +101,8 @@ export default function DreamlogDetail() {
     setEditForm({
       title: article.title,
       content: article.content,
-      image: article.image
+      image: article.image,
+      category: article.category || 'general' // Include category with fallback
     });
   };
 
@@ -140,6 +143,20 @@ export default function DreamlogDetail() {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Helper function to get category display name
+  const getCategoryDisplayName = (category) => {
+    const categories = {
+      'general': 'General',
+      'nightmare': 'Nightmare',
+      'lucid-dream': 'Lucid Dream',
+      'recurring-dream': 'Recurring Dream',
+      'prophetic-dream': 'Prophetic Dream',
+      'healing-dream': 'Healing Dream',
+      'epic-dream': 'Epic Dream'
+    };
+    return categories[category] || category;
   };
 
   if (loading) {
@@ -248,6 +265,28 @@ export default function DreamlogDetail() {
                 className="w-full px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 disabled:opacity-50"
               />
             </div>
+            
+            {/* Category Field - NEW */}
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="category">Category</label>
+              <select
+                id="category"
+                name="category"
+                value={editForm.category}
+                onChange={handleInputChange}
+                disabled={isSaving}
+                className="w-full px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 disabled:opacity-50"
+              >
+                <option value="general">General</option>
+                <option value="nightmare">Nightmare</option>
+                <option value="lucid-dream">Lucid Dream</option>
+                <option value="recurring-dream">Recurring Dream</option>
+                <option value="prophetic-dream">Prophetic Dream</option>
+                <option value="healing-dream">Healing Dream</option>
+                <option value="epic-dream">Epic Dream</option>
+              </select>
+            </div>
+            
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="image">Image URL</label>
               <input
@@ -260,6 +299,7 @@ export default function DreamlogDetail() {
                 className="w-full px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 disabled:opacity-50"
               />
             </div>
+            
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="content">Content</label>
               <textarea
@@ -276,7 +316,13 @@ export default function DreamlogDetail() {
         ) : (
           <>
             <h1 className="text-3xl font-bold mb-4 text-white">{article.title}</h1>
+            
+            {/* Display Category - NEW */}
             <div className="flex flex-wrap items-center text-gray-400 mb-6">
+              <span className="bg-green-600 text-white text-xs px-2 py-1 rounded mr-4 mb-2">
+                {getCategoryDisplayName(article.category)}
+              </span>
+              
               <span className="flex items-center mr-4 mb-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
