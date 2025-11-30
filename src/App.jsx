@@ -28,7 +28,6 @@ import EditProduct from './pages/EditProduct'
 import AddAudio from './pages/AddAudio'
 import EditAudio from './pages/EditAudio'
 import LoginView from './pages/LoginView' 
-import RegisterView from './pages/RegisterView'
 import FavoriteProducts from './pages/FavoriteProducts'
 
 // Import help pages
@@ -86,7 +85,6 @@ function App() {
             <Route path="/dreamlog" element={<Dreamlog />} />
             <Route path="/dreamlog/:id" element={<DreamlogDetail />} />
             <Route path="/login" element={<LoginView />} />
-            <Route path="/register" element={<RegisterView />} />
             
             {/* Favorites route - public access */}
             <Route path="/favorites" element={<FavoriteProducts />} />

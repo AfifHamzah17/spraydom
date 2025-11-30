@@ -20,7 +20,6 @@ class ApiService {
     // Public endpoints that don't need a token
     const publicEndpoints = [
       '/auth/login', 
-      '/auth/register', 
       '/contact',
       '/dreamlogs',
       '/products',
@@ -104,19 +103,6 @@ class ApiService {
     }
     
     throw new Error(response.message || 'Login failed');
-  }
-
-  async register(userData) {
-    const response = await this.request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-    
-    if (response.success) {
-      return response.result;
-    }
-    
-    throw new Error(response.message || 'Registration failed');
   }
 
   async getProfile() {
