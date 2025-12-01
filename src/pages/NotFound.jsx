@@ -24,7 +24,7 @@ export default function NotFoundView() {
             daripada <a href="#/home"> untuk navigasi internal yang lebih baik.
           */}
           <a 
-            href="/home" 
+            href="/" 
             className="inline-block px-8 py-3 font-bold text-white transition-all duration-300 bg-orange-500 rounded-full shadow-lg hover:bg-orange-600 hover:scale-105"
           >
             GO BACK HOME
