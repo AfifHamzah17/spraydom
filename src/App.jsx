@@ -39,6 +39,9 @@ import TermsPage from './pages/help/TermsPage'
 // TAMBAHKAN import react-hot-toast
 import { Toaster } from 'react-hot-toast'
 
+// TAMBAHKAN import NotFoundView
+import NotFoundView from './pages/NotFound'
+
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth()
@@ -140,6 +143,9 @@ function App() {
                 <AddVideo />
               </AdminRoute>
             } />
+            
+            {/* 404 Not Found route - catch all unmatched routes */}
+            <Route path="*" element={<NotFoundView />} />
           </Routes>
         </main>
         <BottomNav />

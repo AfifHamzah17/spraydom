@@ -40,6 +40,12 @@ export default function Product() {
     }
   };
 
+  // Add this function to handle product deletion
+  const handleProductDelete = (productId) => {
+    // Optimistic update - remove the product from state immediately
+    setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
+  };
+
   const filterAndSortProducts = () => {
     let filtered = [...products];
 
@@ -209,6 +215,7 @@ export default function Product() {
                 key={product.id} 
                 product={product} 
                 isAdmin={token && user?.role === 'admin'}
+                onDelete={handleProductDelete} // Add this line
               />
             ))}
           </div>

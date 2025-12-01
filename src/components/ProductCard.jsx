@@ -5,15 +5,15 @@ import { FaWhatsapp, FaEye, FaShoppingCart, FaStar, FaHeart, FaTag, FaTruck, FaE
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import apiService from '../services/api';
 
 export default function ProductCard({ product, isAdmin = false, onDelete }) {
-  const [isSaved, setIsSaved] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const { addToFavorites, removeFromFavorites, isFavorite } = useAuth();
-  const waUrl = `https://wa.me/${product.wa_number}?text=${encodeURIComponent(product.wa_message || `Hello, I'm interested in product ${product.name}`)}`
   
-  // Check if product is in favorites
   const favorited = isFavorite(product.id);
+  const waUrl = `https://wa.me/${product.wa_number}?text=${encodeURIComponent(product.wa_message || `Hello, I'm interested in product ${product.name}`)}`
   
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -45,26 +45,42 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
   const handleEdit = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    // Navigate to edit page
     window.location.href = `/products/edit/${product.id}`;
   }
 
   const handleDelete = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    // Show the modal instead of window.confirm
     setShowDeleteModal(true);
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     setShowDeleteModal(false);
-    // Call the parent component's delete function if provided
-    if (onDelete) {
-      onDelete(product);
-    } else {
-      // Fallback if no parent function is provided
-      console.log(`Deleting product ${product.id}`);
+    setIsDeleting(true);
+    
+    try {
+      // Call the API to delete the product
+      await apiService.deleteProduct(product.id);
+      
+      // Show success message
       toast.success('Product deleted successfully!');
+      
+      // Notify parent component to remove from state (optimistic update already happened)
+      if (onDelete) {
+        onDelete(product.id);
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast.error(error.message || 'Failed to delete product');
+      
+      // If deletion fails, we need to refetch to restore the correct state
+      // The parent component would need to handle this
+      if (onDelete) {
+        // Pass a special flag to indicate failure
+        onDelete(product.id, true);
+      }
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -79,13 +95,12 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
         <div className="relative">
           <Link to={`/products/${product.id}`}>
             <img 
-              src={product.image || 'https://via.placeholder.com/400x300.png?text=No+Image'} // Placeholder image if none available
+              src={product.image || 'https://via.placeholder.com/400x300.png?text=No+Image'}
               alt={product.name} 
               className="w-full h-56 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
             
-            {/* Badge for new products or discounts */}
             {product.isNew && (
               <div className="absolute top-3 left-3 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full">
                 NEW
@@ -98,7 +113,6 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
               </div>
             )}
             
-            {/* Save Product Button */}
             <button
               onClick={toggleSaveProduct}
               className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white p-2 rounded-full hover:bg-black/70 transition-colors"
@@ -107,16 +121,13 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
               <FaHeart className={favorited ? "text-red-500" : ""} />
             </button>
             
-            {/* Product Name in Bottom Overlay */}
             <div className="absolute bottom-3 left-3 right-12">
               <h3 className="text-lg font-bold text-white line-clamp-1">{product.name}</h3>
             </div>
           </Link>
         </div>
         
-        {/* Product Details Section */}
         <div className="p-4 flex flex-col flex-grow">
-          {/* Product Category */}
           {product.category && (
             <div className="flex items-center mb-2">
               <FaTag className="text-gray-400 mr-1 text-xs" />
@@ -124,7 +135,6 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
             </div>
           )}
           
-          {/* Product Rating */}
           {product.rating && (
             <div className="flex items-center mb-3">
               <div className="flex text-yellow-400">
@@ -136,10 +146,8 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
             </div>
           )}
           
-          {/* Product Description */}
           <p className="text-gray-300 text-sm mb-4 line-clamp-2 flex-grow">{product.description || 'No description available for this product.'}</p>
           
-          {/* Price and Availability Status */}
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -159,7 +167,6 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
               </div>
             </div>
             
-            {/* Shipping Info */}
             {product.freeShipping && (
               <div className="flex items-center text-xs text-gray-400">
                 <FaTruck className="mr-1" />
@@ -168,9 +175,7 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
             )}
           </div>
           
-          {/* Action Buttons */}
           <div className="flex flex-wrap gap-2 mt-auto">
-            {/* Detail and Cart buttons for all users */}
             <Link
               to={`/products/${product.id}`}
               className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-xs sm:text-sm min-w-0"
@@ -178,19 +183,7 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
               <FaEye className="mr-1 flex-shrink-0" />
               <span className="truncate">View</span>
             </Link>
-            
-            {/* Order via WhatsApp Button */}
-            {/* <a
-              href={waUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-xs sm:text-sm min-w-0"
-            >
-              <FaWhatsapp className="mr-1 flex-shrink-0" />
-              <span className="truncate">Order</span>
-            </a> */}
 
-            {/* Edit and Delete buttons only for Admin */}
             {isAdmin && (
               <>
                 <motion.button
@@ -200,16 +193,17 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
                   className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-xs sm:text-sm min-w-0"
                 >
                   <FaEdit className="mr-1 flex-shrink-0" />
-                  <span className="truncate"></span>
+                  <span className="truncate">Edit</span>
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleDelete}
-                  className="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-xs sm:text-sm min-w-0"
+                  disabled={isDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-xs sm:text-sm min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FaTrash className="mr-1 flex-shrink-0" />
-                  <span className="truncate"></span>
+                  <span className="truncate">{isDeleting ? 'Deleting...' : 'Delete'}</span>
                 </motion.button>
               </>
             )}
@@ -217,7 +211,6 @@ export default function ProductCard({ product, isAdmin = false, onDelete }) {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal - Using AnimatePresence for proper animations */}
       <AnimatePresence>
         {showDeleteModal && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center">
